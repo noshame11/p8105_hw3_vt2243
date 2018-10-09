@@ -128,7 +128,12 @@ $(document).ready(function () {
 </div>
 
 
-
+<pre class="r"><code>## Clean and Wrangle Data to Prepare for Answering Questions
+brfss_data = janitor::clean_names(dat = brfss_smart2010) %&gt;%
+  filter(topic == &quot;Overall Health&quot;) %&gt;%
+  spread(key = response, value = data_value) %&gt;%
+  janitor::clean_names(dat = .) %&gt;%  
+mutate(excellent_poor = excellent + very_good + good + fair + poor)</code></pre>
 
 
 
