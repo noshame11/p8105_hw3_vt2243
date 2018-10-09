@@ -18,8 +18,8 @@ library(p8105.datasets)
 data(brfss_smart2010)
 ```
 Problem 1
-```{r}
-## Clean and Wrangle Data to Prepare for Answering Questions
+```{r Clean and Wrangle Data to Prepare for Answering Questions}
+## Clean, Filter, Select, Mutate, and Separate Variables
 brfss_data = 
   janitor::clean_names(dat = brfss_smart2010) %>%
   filter(topic == "Overall Health") %>%
@@ -28,3 +28,9 @@ brfss_data =
   mutate(cleaned_response = as.factor(response)) %>%
   separate(locationdesc, into = c("state", "county"), sep = " - ")
 ```
+```{r Answering Questions, echo = FALSE}
+brfss_data_2002 =
+  filter(brfss_data, year == "2002")
+  
+```
+
