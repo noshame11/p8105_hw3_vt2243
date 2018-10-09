@@ -24,7 +24,8 @@ Problem 1
 ## Clean and Wrangle Data to Prepare for Answering Questions
 brfss_data = janitor::clean_names(dat = brfss_smart2010) %>%
   filter(topic == "Overall Health") %>%
-  filter(response == "Excellent"|response == "Very Good"|response == "Good" | response == "Fair" | response == "Poor")
-  select(response) %>%
+  filter(response == "Excellent" | response == "Very Good" | response == "Good" | response == "Fair" | response == "Poor") %>%
+  select(year, locationdesc, response) %>%
   mutate(factor_response = as.factor(response))
+  length(factor_response)
 ```
