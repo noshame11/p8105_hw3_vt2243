@@ -30,7 +30,11 @@ brfss_data =
 ```
 ```{r Answering Questions, echo = FALSE}
 brfss_data_2002 =
-  filter(brfss_data, year == "2002")
+  filter(brfss_data, year == "2002") %>%
+  distinct("state", "county") %>%
+  count(state) %>%
+  filter(n == 7)
+brfss_data_2002
   
 ```
 
