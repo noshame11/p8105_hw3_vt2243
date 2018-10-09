@@ -1,0 +1,20 @@
+---
+title: "Homework #3"
+author: "Vincent Tam"
+date: "October 9, 2018"
+output: html_document
+---
+```{r Library Package Setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+## Prepare Setup to Answer Problem 3
+## install.packages("devtools")
+## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
+library(p8105.datasets)
+data(brfss_smart2010)
+library(tidyverse)
+library(rvest)
+library(httr)
+```
+```{r}
+
+```
