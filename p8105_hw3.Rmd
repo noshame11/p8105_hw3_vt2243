@@ -44,8 +44,8 @@ brfss_plot =
   brfss_data %>%
   distinct(year, state, county) %>%
   select(year, state, county) %>%
-  group_by(year, state)
-  mutate(count = n)
-ggplot(brfss_plot, aes(x = year)) + geom_point() + geom_line()
+  group_by(year, state) %>%
+  mutate(count = n())
+ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geom_line()
 ```
 
