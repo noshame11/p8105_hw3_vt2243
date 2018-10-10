@@ -49,3 +49,9 @@ brfss_plot =
 ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geom_line()
 ```
 
+## Making Table
+```{r Table Making}
+brfss_table = 
+  brfss_data %>%
+  filter(year == 2002 | year == 2006 | year == 2010)
+```
