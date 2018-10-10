@@ -54,4 +54,7 @@ ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geo
 brfss_table = 
   brfss_data %>%
   filter(year == 2002 | year == 2006 | year == 2010)
+  filter(state == NY) %>%
+  select(year, county, Excellent) %>%
+  
 ```
