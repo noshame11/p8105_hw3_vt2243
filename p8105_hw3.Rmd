@@ -64,7 +64,8 @@ brfss_table
 ```
 ```{r Average Proportions}
 brfss_proportions =
-  brfss_data
+  brfss_data >%>
+  select(year, state, county, data_value, cleaned_response)
 
 ## For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time
 
