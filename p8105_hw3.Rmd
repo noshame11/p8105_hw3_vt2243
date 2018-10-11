@@ -58,6 +58,7 @@ brfss_table =
   filter(state == 'NY') %>%
   filter(response == 'Excellent') %>%
   mutate(data_value_numeric = as.numeric(data_value)) %>%
+  group_by(year) %>%
   summarize(brfss_excellentsd = sd(data_value_numeric), brfss_excellentmean = mean(data_value_numeric))
 brfss_table
 ```
