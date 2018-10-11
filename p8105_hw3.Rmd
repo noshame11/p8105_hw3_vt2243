@@ -8,14 +8,15 @@ output:
 ```{r Library Package Setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ## Prepare Setup to Answer Problem 3
-## Install Libraries
 library(tidyverse)
 library(rvest)
 library(httr)
+library(knitr)
 ## install.packages("devtools")
 ## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
 library(p8105.datasets)
 data(brfss_smart2010)
+## Install Libraries
 ```
 Problem 1
 ```{r Clean and Wrangle Data to Prepare for Answering Questions, include = FALSE}
@@ -51,11 +52,12 @@ ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geo
 
 ## Making Table
 ```{r Table Making}
-brfss_table = 
+brfss_table =   
   brfss_data %>%
   filter(year == '2002' | year == '2006' | year == '2010') %>%
   filter(state == 'NY') %>%
-  select(year, county, Excellent) %>%
-  group_by(year)
-  summarize(brfss_excellentsd = sd(excellent), brfss_excellentmean = mean(excellent))
+  filter(response == 'Excellent') %>%
+  mutate(data_value_numeric = as.numeric(data_value)) %>%
+  summarize(brfss_excellentsd = sd(data_value_numeric), brfss_excellentmean = mean(data_value_numeric))
+brfss_table
 ```
