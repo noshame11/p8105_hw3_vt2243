@@ -90,11 +90,12 @@ library(tidyverse)
 ```
 ```{r}
 View(instacart)
-## instacart_cleaned =
-  
-##  instacart %>%
-##  janitor::clean_names() %>%
-##  filter(aisle != 'missing')
+instacart_cleaned =
+  instacart %>%
+  janitor::clean_names() %>%
+  filter(aisle != 'missing')
+  group_by(aisle) %>%
+  summarize(n = n())
 ```
 
 
