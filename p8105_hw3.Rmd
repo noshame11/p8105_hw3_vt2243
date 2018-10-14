@@ -89,11 +89,11 @@ brfss_proportions
 library(tidyverse)
 ```
 ```{r}
-View(instacart)
 instacart_cleaned =
   instacart %>%
-  janitor::clean_names() %>%
-  filter(aisle != 'missing')
+  janitor::clean_names() 
+length(instacart_cleaned$aisle) 
+  filter(aisle != 'missing') %>%
   group_by(aisle) %>%
   summarize(n = n())
 ```
