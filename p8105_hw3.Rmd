@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Prepare Setup to Answer Problem 3
 ## Install Libraries
 library(tidyverse)
+library(forcats)
 library(rvest)
 library(httr)
 library(knitr)
@@ -103,8 +104,15 @@ most_ordered =
   filter(min_rank(desc(n))<6)
 most_ordered
 ```
+most_ordered %>%
+  group_by(aisle_id, n) %>%
+  mutate(temp_ranking = min_rank(most_ordered))
 ```{r Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.}
-
+aisle_itemordered = 
+  most_ordered %>%
+  mutate(aisle_id_numeric = as.factor(aisle_id)) %>%
+  mutate(aisle_id_numeric = forcats::fct_reorder(aisle_id_numeric, n))
+  ggplot(aes(x = aisle_id, y = n)) + geom_bar(stat = "identity") + labs(title("Number of Items Ordered in Each Aisle"", x = aisle_id, y = "Number of Items"))
 ```
 
 
