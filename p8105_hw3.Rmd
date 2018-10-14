@@ -5,39 +5,46 @@ date: "October 9, 2018"
 output:
   github_document: default
 ---
-```{r Library Package Setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r Library Package Setup and Global Options, include = FALSE}
+## knitr::opts_chunk$set(fig.width = 12, fig.height = 8, fig.path = 'Figs/', echo = FALSE, warning = FALSE, message = FALSE)
 ## Prepare Setup to Answer Problem 3
 ## Install Libraries
 library(tidyverse)
+library(ggplot2)
 library(forcats)
-library(rvest)
-library(httr)
 library(knitr)
 ## install.packages("devtools")
 ## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
+## Upload Datasets
 library(p8105.datasets)
 data(brfss_smart2010)
 ```
-Problem 1
-```{r Clean and Wrangle Data to Prepare for Answering Questions, include = FALSE}
+Problem 1 - Behavioral Risk Factors Surveillance System (BRFSS) Data
+```{r Clean and Format Data to Prepare for Answering Questions}
 ## Clean, Filter, Select, Mutate, and Separate Variables
 brfss_data = 
-  janitor::clean_names(dat = brfss_smart2010) %>%
+  brfss_smart2010 %>%
+## format the data to use appropriate variable names
+  janitor::clean_names() %>%
+## focus on the “Overall Health” topic
   filter(topic == "Overall Health") %>%
+## include only responses from “Excellent” to “Poor”
   filter(response == "Excellent" | response == "Very Good" | response == "Good" | response == "Fair" | response == "Poor") %>%
-  select(year, locationdesc, topic, response, data_value) %>%
+## organize responses as a factor taking levels ordered from “Excellent” to “Poor”
   mutate(cleaned_response = as.factor(response)) %>%
+  mutate(response = forcats::fct_relevel(response, c("Excellent", "Very Good", "Good", "Fair", "Poor"))) %>%
+## organize and select relevant columns for questions
+  select(year, locationdesc, topic, response, data_value) %>%
   separate(locationdesc, into = c("state", "county"), sep = " - ")
 ```
-```{r Answering Questions, eval = FALSE}
+
+```{r Answering Questions}
 brfss_data_2002 =
   filter(brfss_data, year == "2002") %>%
   distinct(state, county) %>%
   count(state) %>%
   filter(n == 7)
 ## In 2002, which states were observed at 7 locations?
-brfss_data_2002
 ```
 In 2002, the following states had 7 locations: 
 ```{r Spaghetti Plotting}
@@ -108,11 +115,10 @@ most_ordered %>%
   group_by(aisle_id, n) %>%
   mutate(temp_ranking = min_rank(most_ordered))
 ```{r Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.}
-aisle_itemordered = 
-  most_ordered %>%
+most_ordered %>%
   mutate(aisle_id_numeric = as.factor(aisle_id)) %>%
-  mutate(aisle_id_numeric = forcats::fct_reorder(aisle_id_numeric, n))
-  ggplot(aes(x = aisle_id, y = n)) + geom_bar(stat = "identity") + labs(title("Number of Items Ordered in Each Aisle"", x = aisle_id, y = "Number of Items"))
+  mutate(aisle_id_numeric = forcats::fct_reorder(aisle_id_numeric, n)) %>%
+ggplot(most_ordered, aes(x = aisle_id_numeric)) + geom_bar(stat = "identity") + scale_x_discrete(drop = FALSE)
 ```
 
 
