@@ -5,7 +5,7 @@ date: "October 9, 2018"
 output:
   github_document: default
 ---
-```{r Library Package Setup and Global Options, include = FALSE}
+```{r Library Package Setup and Global Options, echo = FALSE}
 ## Prepare Setup to Answer Problem 3
 ## Install Libraries
 library(tidyverse)
@@ -35,6 +35,7 @@ brfss_data =
   select(year, locationdesc, topic, response, data_value) %>%
   separate(locationdesc, into = c("state", "county"), sep = " - ")
 ```
+Answers to Homework Questions
 ```{r Answering Questions}
 brfss_data_2002 =
   filter(brfss_data, year == "2002") %>%
@@ -43,8 +44,8 @@ brfss_data_2002 =
   filter(n == 7)
 ## In 2002, which states were observed at 7 locations?
 "In 2002, the following states had 7 locations:" 
+brfss_data_2002
 ```
-'r View(brfss_data_2002)`
 ```{r Spaghetti Plotting}
 ## Spaghetti Plots
 brfss_plot = 
