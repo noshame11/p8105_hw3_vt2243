@@ -91,11 +91,19 @@ library(tidyverse)
 ```{r}
 instacart_cleaned =
   instacart %>%
-  janitor::clean_names() 
-length(instacart_cleaned$aisle) 
-  filter(aisle != 'missing') %>%
-  group_by(aisle) %>%
-  summarize(n = n())
+  janitor::clean_names() %>%
+  filter(aisle != 'missing')
+length(unique(instacart_cleaned$aisle)) 
+View(instacart_cleaned)
 ```
+```{r}
+most_ordered =
+  instacart_cleaned =
+  group_by(aisle) %>%
+  summarize(n = n()) %>%
+  fiter(min_rank(desc(n)))
+most_ordered
+```
+
 
 
