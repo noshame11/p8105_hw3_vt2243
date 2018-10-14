@@ -87,23 +87,26 @@ brfss_proportions
 ## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
 ##library(p8105.datasets); already installed but do not want to install every time
 library(tidyverse)
+data(instacart)
 ```
-```{r}
+```{r Problem 2, eval = FALSE}
 instacart_cleaned =
   instacart %>%
-  janitor::clean_names() %>%
-  filter(aisle != 'missing')
+  janitor::clean_names() 
 length(unique(instacart_cleaned$aisle)) 
-View(instacart_cleaned)
 ```
-```{r}
+```{r Problem 2 Most Common, eval = FALSE}
 most_ordered =
-  instacart_cleaned =
-  group_by(aisle) %>%
+  instacart_cleaned %>%
+  group_by(aisle_id) %>%
   summarize(n = n()) %>%
-  fiter(min_rank(desc(n)))
+  filter(min_rank(desc(n))<6)
 most_ordered
 ```
+```{r Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.}
+
+```
+
 
 
 
