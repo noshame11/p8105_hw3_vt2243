@@ -75,7 +75,7 @@ brfss_table
 brfss_proportions = 
   brfss_data %>%
   mutate(year_factor = as.factor(year)) %>%
-  group_by(year_factor, state) %>%
+  group_by(year_factor, state, response) %>%
   summarize(brfss_excellentmean = mean(data_value), 
             brfss_verygoodmean = mean(data_value), 
             brfss_goodmean = mean(data_value),
@@ -118,6 +118,26 @@ most_ordered %>%
 ##  mutate(aisle_idnumeric = forcats::fct_reorder(aisle_id_numeric, n)) %>%
 ##  ggplot(most_ordered, aes(x = aisle_idnumeric) + geom_bar(stat = "identity") + scale_x_discrete(drop = FALSE))
 ```
+## Problem #3
+```{r}
+data(ny_noaa)
+```
+```{r}
+nynoaa_cleaned = 
+  ny_noaa %>% 
+  janitor::clean_names() %>%
+  separate(date, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(tmin = as.numeric(tmin)/10, tmax = as.numeric(tmax)/10)
+```
+```{r}
+nynoaa_snow = 
+  nynoaa_cleaned %>%
+  group_by(snow) %>%
+  summarize(n = n()) %>%
+  top_n(3)
+nynoaa_snow
+```
+
 
 
 
