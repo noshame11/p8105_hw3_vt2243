@@ -12,8 +12,8 @@ library(tidyverse)
 library(ggplot2)
 library(forcats)
 library(knitr)
-## install.packages("devtools")
-## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
+library(ggridges)
+## install.packages("devtools") Already Installed but do not want to do it constantly
 ## Upload Datasets
 library(p8105.datasets)
 data(brfss_smart2010)
@@ -34,6 +34,7 @@ brfss_data =
   ## organize and select relevant columns for questions
   select(year, locationdesc, topic, response, data_value) %>%
   separate(locationdesc, into = c("state", "county"), sep = " - ")
+brfss_data
 ```
 Answers to Homework Questions
 ```{r Answering Questions}
@@ -71,24 +72,21 @@ brfss_table =
 brfss_table
 ```
 ```{r Average Proportions}
-brfss_proportions =
+brfss_proportions = 
   brfss_data %>%
-  mutate(year_factor = as.factor('year')) %>%
+  mutate(year_factor = as.factor(year)) %>%
   group_by(year_factor, state) %>%
-  filter(response == 'Excellent' | response == 'Very Good') %>%
-  mutate(data_value_numeric = as.numeric(data_value)) %>%
-  summarize(brfss_excellentmean = mean('Excellent'), 
-            brfss_verygoodmean = mean('Very Good'), 
-            brfss_goodmean = mean(data_value_numeric),
-            brfss_fairmean = mean(data_value_numeric),
-            brfss_poormean = mean(data_value_numeric)) %>%
-  mutate(response_proportions = factor('cleaned_response', levels = c('brfss_excellentmean', 'brfss_goodmean')))
+  summarize(brfss_excellentmean = mean(data_value), 
+            brfss_verygoodmean = mean(data_value), 
+            brfss_goodmean = mean(data_value),
+            brfss_fairmean = mean(data_value),
+            brfss_poormean = mean(data_value)) %>%
+  gather(key = cleaned_response, value = proportion, brfss_excellentmean:brfss_poormean) %>% 
+  mutate(response_f = factor('cleaned_response', levels = c('brfss_excellentmean', 'brfss_verygoodmean', 'brfss_goodmean', 'brfss_fairmean', 'brfss_poormean')))
+ggplot(brfss_proportions, aes(x = year_factor, y = proportion)) + geom_boxplot() + facet_grid(. ~ response_f) +
+  theme(axis.text.x = element_text(angle = 90)) + labs(title = "Average Proportion per Response Category"  )
 brfss_proportions
-
-## For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time
-
 ```
-
 ## Problem #2
 ```{r}
 ## install.packages("devtools")
