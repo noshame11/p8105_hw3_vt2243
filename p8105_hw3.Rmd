@@ -57,7 +57,7 @@ brfss_plot =
   mutate(count = n())
 ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geom_line()
 ```
-"The Spaghetti Plot shows the number of locations in each state from 2002 to 2010. The vast majority of states are observed to have 10 locations or less. A few exceeded 10 but had less than 20. A peak in 2007 shows 40+ locations and a similar 40+ peak was observed in 2010."
+The Spaghetti Plot shows the number of locations in each state from 2002 to 2010. The vast majority of states are observed to have 10 locations or less. A few exceeded 10 but had less than 20. A peak in 2007 shows 40+ locations and a similar 40+ peak was observed in 2010.
 ```{r Making Table of Excellent Responses in NY State, echo = FALSE}
 brfss_table =   
   brfss_data %>%
@@ -83,7 +83,7 @@ brfss_proportions =
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))) 
 ggplot(brfss_proportions, aes(x = year, y = proportion, fill = response)) + geom_violin() + facet_grid(~response) + theme(axis.text.x = element_text(angle = 90)) + labs(title = "Average Proportion per Response Category"  )
 ```
-The side-by-side plots of the response categories: Excellent, Very Good, Good, Fair, and Poor, show relatively consistent distribution in their respective ranges through the years examined. The response Very Good represented the highest proportion of responses every year.
+  The side-by-side plots of the response categories: Excellent, Very Good, Good, Fair, and Poor, show relatively consistent distribution in their respective ranges through the years examined. The response Very Good represented the highest proportion of responses every year.
 
 ## Problem 2 - Instacart Data
 ```{r Problem 2 Instacart Data, echo = FALSE}
@@ -102,7 +102,11 @@ most_ordered = instacart_cleaned %>%
 most_ordered
 ```
 There are 134 different aisles. The top five aisles where the most food are ordered from, are:  
-1. Fresh Vegetables  2. Fresh Fruites  3. Packaged Vegetables Fruits  4. Yogurt  5. Packaged Cheese  
+1. Fresh Vegetables  
+2. Fresh Fruites  
+3. Packaged Vegetables Fruits  
+4. Yogurt  
+5. Packaged Cheese  
 ```{r Plot of number of items ordered in each aisle, ordered and organized sensibly, echo = FALSE}
 ## Organizing Data from Least to Most
 instacart_cleaned %>% 
@@ -112,6 +116,7 @@ instacart_cleaned %>%
 ## Plotting Number of Items in Each Aisle from Least to Most
 ggplot(aes(x = aisle_id, y = n)) + geom_bar(stat = "identity") + labs(title = "Number of Items per Aisle",    x = "Aisle ID", y = "Number of Items") + theme(axis.text.x = element_text(angle = 45, size = 5))
 ```
+
 The plot above shows approximately 150,000+ items stocked in the aisles in the dataset. Fresh Vegetables, Aisle 83 hold the most items while Beauty, Aisle 132, contains the least. 
 ```{r Most Popular Food Items, echo = FALSE}
 ## Cleaning Data for Specific Aisles
@@ -130,6 +135,7 @@ popular_item_sort =
   knitr::kable(digits = 1)
 popular_item_sort
 ```
+
 The table above shows the most popular items for their respective aisles. In Packaged Vegetables Fruits, Organic Baby Spinach had 9784 orders, 20x more than the most popular Baking Ingredient, Light Brown Sugar (499 orders). Meanwhile, Dog Food Care's most popular item is Snack Sticks Chicken & Rice Recipe Dog Treats, with 30 orders. 
 ```{r Pink Lady Apples & Coffee Ice Cream, echo = FALSE}
 ## Cleaning Data
@@ -144,19 +150,21 @@ apples_icecream =
 ## Chart
 apples_icecream
 ```
+
 The table above shows the average time of day where people order pink-lady apples and coffee ice cream is generally during mid-day. However, coffee ice cream is ordered the latest on Tues, Wed, and Thurs. Pink-lady apples  This habit appears to tend to be ordered the latest on Wednesdays.
+
 ## Problem 3 - New York NOAA Data
-```{r}
+```{r NYNOAA Data, echo = FALSE}
+## Uploading Data
 data(ny_noaa)
-```
-```{r}
+## Cleaning and Organizing Data
 nynoaa_cleaned = 
   ny_noaa %>% 
   janitor::clean_names() %>%
   separate(date, into = c("year", "month", "day"), sep = "-") %>% 
   mutate(tmin = as.numeric(tmin)/10, tmax = as.numeric(tmax)/10)
 ```
-```{r}
+```{r Snowfall Values, echo = FALSE}
 nynoaa_snow = 
   nynoaa_cleaned %>%
   group_by(snow) %>%
@@ -164,7 +172,9 @@ nynoaa_snow =
   top_n(3)
 nynoaa_snow
 ```
-```{r}
+The most commonly observed value of snowfall is 0. This corresponds to the vast majority of days in NY where there is no snowfall. 
+```{r Average Max Temp in Jan and Jul, echo = FALSE}
+## Organizing and Cleaning and Plotting Data
 maxtempJanJul_plot =
   nynoaa_cleaned %>%
   na.omit() %>%
@@ -175,7 +185,8 @@ maxtempJanJul_plot =
   ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) + theme(axis.text.x = element_text(size = 9, angle = 90)) + labs(title = "Comparison of Average Max Temps in Celcius between January and July from 1981 to 2010", x = "Years", y = "Temperature (Celcius)" )
 maxtempJanJul_plot
 ```
-```{r}
+The two sets of boxplots compare average max temperatures for the months of January and July over years of observation. January max temps show much greater variability than July with outliers on the high and low end. July on the other hand has outliers virtually inhabiting entirely on the low end. Furthermore, July max temps generally stays between 25 to 30 degree Celcius while January max temps move between -5 and 5 degree Celcius. 
+```{r Plot 1 Min and Max Temps, eval = FALSE}
 plot1_minmax =
   nynoaa_cleaned %>%
   na.omit() %>%
@@ -183,7 +194,8 @@ plot1_minmax =
   ggplot(aes(x = tmin, y = tmax )) + geom_hex() + labs(title = "Minimum Temperatures vs Maximum Temperatures", x = "Minimum Temp", y = "Maximum Temp") + theme(axis.text.x = element_text(size = 9, angle = 90))
 plot1_minmax
 ```
-```{r}
+In the plot of Min and Max temperaturs, a positive linear slope is observed. This corresponds to the min-max temperature relationship: as the minimum temperature rises, the maximum temperature rises too. 
+```{r Plot 2 Snowfall Distribution, eval = FALSE}
 plot2_snowfall =
   nynoaa_cleaned %>%
   na.omit() %>%
@@ -191,3 +203,4 @@ plot2_snowfall =
   ggplot(aes(x = year, y = snow )) + geom_boxplot() + labs(title = "Distribution of Snowfall Values by Years", x = "Year", y = "Snowfall Valuesp") + theme(axis.text.x = element_text(size = 9, angle = 90))
 plot2_snowfall
 ```
+The snowfall distribution appears rather consistent throughout the years with relatively few outliers. Snowfall distribution between years has not seen great variability. 
