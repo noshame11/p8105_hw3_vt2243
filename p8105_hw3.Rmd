@@ -19,8 +19,8 @@ library(janitor)
 library(p8105.datasets)
 data(brfss_smart2010)
 ```
-Problem 1 - Behavioral Risk Factors Surveillance System (BRFSS) Data
-```{r Clean and Format Data to Prepare for Answering Questions}
+### Problem 1 - Behavioral Risk Factors Surveillance System (BRFSS) Data
+```{r Clean and Format Data to Prepare for Answering Questions, echo = FALSE}
 ## Clean, Filter, Select, Mutate, and Separate Variables
 brfss_data = 
   brfss_smart2010 %>%
@@ -35,20 +35,19 @@ brfss_data =
   ## organize and select relevant columns for questions
   select(year, locationdesc, topic, response, data_value) %>%
   separate(locationdesc, into = c("state", "county"), sep = " - ")
-brfss_data
 ```
 Answers to Homework Questions
-```{r Answering Questions}
+```{r Answering Questions, echo = FALSE}
 brfss_data_2002 =
   filter(brfss_data, year == "2002") %>%
   distinct(state, county) %>%
   count(state) %>%
   filter(n == 7)
 ## In 2002, which states were observed at 7 locations?
-"In 2002, the following states had 7 locations:" 
 brfss_data_2002
 ```
-```{r Spaghetti Plotting}
+In 2002, Connecticut, Floriday, and North Carolina were states observed at 7 locations
+```{r Spaghetti Plotting, echo = FALSE}
 ## Spaghetti Plots
 brfss_plot = 
   brfss_data %>%
@@ -56,12 +55,10 @@ brfss_plot =
   select(year, state, county) %>%
   group_by(year, state) %>%
   mutate(count = n())
-"Spaghetti Plot showing the number of locations in each state from 2002 to 2010."
 ggplot(brfss_plot, aes(x = year, y = count, color = state)) + geom_point() + geom_line()
 ```
-
-## Making Table
-```{r Table Making}
+"The Spaghetti Plot shows the number of locations in each state from 2002 to 2010. The vast majority of states are observed to have 10 locations or less. A few exceeded 10 but had less than 20. A peak in 2007 shows 40+ locations and a similar 40+ peak was observed in 2010."
+```{r Making Table of Excellent Responses in NY State, echo = FALSE}
 brfss_table =   
   brfss_data %>%
   filter(year == '2002' | year == '2006' | year == '2010') %>%
@@ -72,7 +69,8 @@ brfss_table =
   summarize(brfss_NYexcellentsd = sd(data_value_numeric), brfss_NYexcellentmean = mean(data_value_numeric))
 brfss_table
 ```
-```{r Average Proportions, warning = FALSE}
+The standard deviations (SD) and means of years 2002, 2006, and 2010, were calculated for the proportions of 'Excellent' responses in NY state. 2002 showed an SD of 4.49 and a mean of 24.04. 2006 had an SD of 4.00 and a mean of 22.53. Year 2010 had an SD of 3.57 and a mean of 22.70. The means and SDs of the three years appear to be similar and consistent.
+```{r 5-Panel Plot Comparing Proportions of Responses, warning = FALSE}
 brfss_proportions = 
   brfss_data %>%
   group_by(year, state, response) %>%
@@ -84,40 +82,70 @@ brfss_proportions =
   gather(key = cleaned_response, value = proportion, brfss_excellentmean:brfss_poormean) %>% 
   mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))) 
 ggplot(brfss_proportions, aes(x = year, y = proportion, fill = response)) + geom_violin() + facet_grid(~response) + theme(axis.text.x = element_text(angle = 90)) + labs(title = "Average Proportion per Response Category"  )
-brfss_proportions
 ```
-## Problem #2
-```{r}
-## install.packages("devtools")
-## devtools::install_github("p8105/p8105.datasets"); already installed but do not want to install every time
-##library(p8105.datasets); already installed but do not want to install every time
-library(tidyverse)
+The side-by-side plots of the response categories: Excellent, Very Good, Good, Fair, and Poor, show relatively consistent distribution in their respective ranges through the years examined. The response Very Good represented the highest proportion of responses every year.
+
+## Problem 2 - Instacart Data
+```{r Problem 2 Instacart Data, echo = FALSE}
+## Uploading and Cleaning Data
 data(instacart)
-```
-```{r Problem 2, eval = FALSE}
-instacart_cleaned =
+instacart_cleaned = 
   instacart %>%
   janitor::clean_names() 
-length(unique(instacart_cleaned$aisle)) 
-```
-```{r Problem 2 Most Common, eval = FALSE}
-most_ordered =
-  instacart_cleaned %>%
-  group_by(aisle_id) %>%
+## Number of Aisles in Dataset
+  length(unique(instacart_cleaned$aisle)) 
+## Top 5 Most Ordered Items
+most_ordered = instacart_cleaned %>%
+  group_by(aisle) %>%
   summarize(n = n()) %>%
-  filter(min_rank(desc(n))<6)
+  filter(min_rank(desc(n)) < 6)
 most_ordered
 ```
-most_ordered %>%
-  group_by(aisle_id, n) %>%
-  mutate(temp_ranking = min_rank(most_ordered))
-```{r Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.}
-## most_ordered %>%
-##  mutate(aisle_idnumeric = as.factor(aisle_id)) %>%
-##  mutate(aisle_idnumeric = forcats::fct_reorder(aisle_id_numeric, n)) %>%
-##  ggplot(most_ordered, aes(x = aisle_idnumeric) + geom_bar(stat = "identity") + scale_x_discrete(drop = FALSE))
+There are 134 different aisles. The top five aisles where the most food are ordered from, are:  
+1. Fresh Vegetables  2. Fresh Fruites  3. Packaged Vegetables Fruits  4. Yogurt  5. Packaged Cheese  
+```{r Plot of number of items ordered in each aisle, ordered and organized sensibly, echo = FALSE}
+## Organizing Data from Least to Most
+instacart_cleaned %>% 
+  group_by(aisle_id) %>%
+  summarize(n = n()) %>%
+  mutate(aisle_id = forcats::fct_reorder(as.factor(aisle_id), n)) %>% 
+## Plotting Number of Items in Each Aisle from Least to Most
+ggplot(aes(x = aisle_id, y = n)) + geom_bar(stat = "identity") + labs(title = "Number of Items per Aisle",    x = "Aisle ID", y = "Number of Items") + theme(axis.text.x = element_text(angle = 45, size = 5))
 ```
-## Problem #3
+The plot above shows approximately 150,000+ items stocked in the aisles in the dataset. Fresh Vegetables, Aisle 83 hold the most items while Beauty, Aisle 132, contains the least. 
+```{r Most Popular Food Items, echo = FALSE}
+## Cleaning Data for Specific Aisles
+popular_item = 
+  instacart %>% 
+  filter(aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>% 
+  select(aisle, product_name) %>% 
+  group_by(aisle, product_name) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n))
+## Sorting Most Popular Items
+popular_item_sort = 
+  popular_item %>%
+  group_by(aisle) %>% 
+  top_n(1) %>% 
+  knitr::kable(digits = 1)
+popular_item_sort
+```
+The table above shows the most popular items for their respective aisles. In Packaged Vegetables Fruits, Organic Baby Spinach had 9784 orders, 20x more than the most popular Baking Ingredient, Light Brown Sugar (499 orders). Meanwhile, Dog Food Care's most popular item is Snack Sticks Chicken & Rice Recipe Dog Treats, with 30 orders. 
+```{r Pink Lady Apples & Coffee Ice Cream, echo = FALSE}
+## Cleaning Data
+apples_icecream = 
+  instacart %>% 
+  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") %>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(mean_hour = mean(order_hour_of_day)) %>% 
+  spread(key = product_name, value = mean_hour) %>% 
+  mutate(order_dow = recode(order_dow, `0` = "Sunday", `1` = "Monday", `2` = "Tuesday", `3` = "Wednesday", `4` = "Thursday", `5` = "Friday", `6` = "Saturday")) %>%
+   knitr::kable(digits = 1)
+## Chart
+apples_icecream
+```
+The table above shows the average time of day where people order pink-lady apples and coffee ice cream is generally during mid-day. However, coffee ice cream is ordered the latest on Tues, Wed, and Thurs. Pink-lady apples  This habit appears to tend to be ordered the latest on Wednesdays.
+## Problem 3 - New York NOAA Data
 ```{r}
 data(ny_noaa)
 ```
