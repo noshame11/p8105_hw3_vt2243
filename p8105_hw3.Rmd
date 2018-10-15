@@ -137,6 +137,12 @@ nynoaa_snow =
   top_n(3)
 nynoaa_snow
 ```
+```{r}
+maxtempJanJul_plot =
+  nynoaa_cleaned %>%
+  select(year, month, id, tmin, tmax)
+```
+
 
 
 
