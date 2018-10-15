@@ -13,6 +13,7 @@ library(ggplot2)
 library(forcats)
 library(knitr)
 library(ggridges)
+library(janitor)
 ## install.packages("devtools") Already Installed but do not want to do it constantly
 ## Upload Datasets
 library(p8105.datasets)
@@ -142,10 +143,19 @@ maxtempJanJul_plot =
   nynoaa_cleaned %>%
   select(year, month, id, tmin, tmax) %>%
   filter(month == "01" | month == "07") %>%
+  na.omit() %>%
   group_by(year, month, id) %>%
   summarize(tmax_mean = mean(tmax)) %>%
   ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) + theme(axis.text.x = element_text(size = 9, angle = 90)) + labs(title = "Comparison of Average Max Temps in Celcius between January and July from 1981 to 2010", x = "Years", y = "Temperature (Celcius)" )
 maxtempJanJul_plot
+```
+```{r}
+plot1_minmax =
+  nynoaa_cleaned %>%
+  select(tmin, tmax) %>%
+  na.omit() %>%
+  ggplot(aes(x = tmin, y = tmax )) + geom_hex()
+plot1_minmax
 ```
 
 
