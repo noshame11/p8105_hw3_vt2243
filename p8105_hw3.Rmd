@@ -143,8 +143,8 @@ maxtempJanJul_plot =
   select(year, month, id, tmin, tmax) %>%
   filter(month == "01" | month == "07") %>%
   group_by(year, month, id) %>%
-  summarize(tmax_mean = mean(tmax))
-## ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) 
+  summarize(tmax_mean = mean(tmax)) %>%
+  ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) 
 ```
 
 
