@@ -29,7 +29,7 @@ brfss_data =
 ## focus on the “Overall Health” topic
   filter(topic == "Overall Health") %>%
 ## include only responses from “Excellent” to “Poor”
-  filter(response == "Excellent" | response == "Very Good" | response == "Good" | response == "Fair" | response == "Poor") %>%
+  filter(response == "Excellent" | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>%
 ## organize responses as a factor taking levels ordered from “Excellent” to “Poor”
   mutate(cleaned_response = as.factor(response)) %>%
   ## organize and select relevant columns for questions
@@ -72,20 +72,18 @@ brfss_table =
   summarize(brfss_NYexcellentsd = sd(data_value_numeric), brfss_NYexcellentmean = mean(data_value_numeric))
 brfss_table
 ```
-```{r Average Proportions}
+```{r Average Proportions, warning = FALSE}
 brfss_proportions = 
   brfss_data %>%
-  mutate(year_factor = as.factor(year)) %>%
-  group_by(year_factor, state, response) %>%
-  summarize(brfss_excellentmean = mean(data_value), 
-            brfss_verygoodmean = mean(data_value), 
-            brfss_goodmean = mean(data_value),
-            brfss_fairmean = mean(data_value),
-            brfss_poormean = mean(data_value)) %>%
+  group_by(year, state, response) %>%
+  summarize(brfss_excellentmean = mean(as.numeric(data_value)), 
+            brfss_verygoodmean = mean(as.numeric(data_value)), 
+            brfss_goodmean = mean(as.numeric(data_value)),
+            brfss_fairmean = mean(as.numeric(data_value)),
+            brfss_poormean = mean(as.numeric(data_value))) %>%
   gather(key = cleaned_response, value = proportion, brfss_excellentmean:brfss_poormean) %>% 
-  mutate(response_f = factor('cleaned_response', levels = c('brfss_excellentmean', 'brfss_verygoodmean', 'brfss_goodmean', 'brfss_fairmean', 'brfss_poormean')))
-ggplot(brfss_proportions, aes(x = year_factor, y = proportion)) + geom_boxplot() + facet_grid(. ~ response_f) +
-  theme(axis.text.x = element_text(angle = 90)) + labs(title = "Average Proportion per Response Category"  )
+  mutate(response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))) 
+ggplot(brfss_proportions, aes(x = year, y = proportion, fill = response)) + geom_violin() + facet_grid(~response) + theme(axis.text.x = element_text(angle = 90)) + labs(title = "Average Proportion per Response Category"  )
 brfss_proportions
 ```
 ## Problem #2
@@ -154,12 +152,14 @@ plot1_minmax =
   nynoaa_cleaned %>%
   na.omit() %>%
   select(tmin, tmax) %>%
-  ggplot(aes(x = tmin, y = tmax )) + geom_hex() + labs(title = "Minimum Temperatures vs Maximum Temperatures", x = "Minimum Temp", y = "Maximum Temp")
+  ggplot(aes(x = tmin, y = tmax )) + geom_hex() + labs(title = "Minimum Temperatures vs Maximum Temperatures", x = "Minimum Temp", y = "Maximum Temp") + theme(axis.text.x = element_text(size = 9, angle = 90))
 plot1_minmax
 ```
 ```{r}
-plot2_snofall =
+plot2_snowfall =
   nynoaa_cleaned %>%
   na.omit() %>%
-  filter(snow > 0 & snow < 100)
+  filter(snow > 0 & snow < 100) %>%
+  ggplot(aes(x = year, y = snow )) + geom_boxplot() + labs(title = "Distribution of Snowfall Values by Years", x = "Year", y = "Snowfall Valuesp") + theme(axis.text.x = element_text(size = 9, angle = 90))
+plot2_snowfall
 ```
