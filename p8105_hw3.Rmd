@@ -144,7 +144,8 @@ maxtempJanJul_plot =
   filter(month == "01" | month == "07") %>%
   group_by(year, month, id) %>%
   summarize(tmax_mean = mean(tmax)) %>%
-  ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) 
+  ggplot(aes(x = year, y = tmax_mean)) + geom_boxplot() + facet_grid(.~month) + theme(axis.text.x = element_text(size = 9, angle = 90)) + labs(title = "Comparison of Average Max Temps in Celcius between January and July from 1981 to 2010", x = "Years", y = "Temperature (Celcius)" )
+maxtempJanJul_plot
 ```
 
 
